@@ -22,4 +22,8 @@
     <ProjectReference Include="..\GeoChat.Chat.Infra\GeoChat.Chat.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GeoChat.Chat.Core\GeoChat.Chat.Core.csproj" />
+  </ItemGroup>
+
 </Project>
