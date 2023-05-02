@@ -1,5 +1,8 @@
 using GeoChat.Chat.Api.Hubs;
 using GeoChat.Chat.Core.EventBus;
+using GeoChat.Chat.Core.EventBus.EventHandlers;
+using GeoChat.Chat.Core.EventBus.Events;
+using GeoChat.Chat.Core.EventBus.Extensions;
 using GeoChat.Chat.Infra.DbAccess;
 using GeoChat.Chat.Infra.EventBus.Extensions;
 using GeoChat.Identity.Api.AuthExtensions;
@@ -23,6 +26,7 @@ if (builder.Environment.IsDevelopment())
 else
 {
     builder.Services.RegisterEventBus();
+    builder.Services.RegisterEventHandlers();
 }
 
 var app = builder.Build();
@@ -32,6 +36,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    var bus = app.Services.GetService<IEventBus>();
+    if (bus == null) throw new Exception("Bus is null");
+    bus.Subscribe<MessageSentEvent, MessageSentEventHandler>();
+    bus.Subscribe<NewAccountCreatedEvent, NewAccountCreatedEventHandler>();
 }
 
 app.UseHttpsRedirection();
