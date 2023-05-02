@@ -8,4 +8,8 @@ namespace GeoChat.Chat.Core.Repos;
 
 public interface IUnitOfWork
 {
+    IUsersRepo UsersRepo { get; }
+    IChatsRepo ChatsRepo { get; }
+    IMessagesRepo MessagesRepo { get; }
+    Task<int> SaveAsync();
 }
