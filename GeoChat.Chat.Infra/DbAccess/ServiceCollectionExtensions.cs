@@ -1,11 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GeoChat.Chat.Core.Repos;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeoChat.Chat.Infra.DbAccess;
 
@@ -19,8 +15,8 @@ public static class ServiceCollectionExtensions
             options.UseSqlServer(configuration.GetConnectionString("ChatDb"));
         });
 
-        // TODO: register UnitOfWork
-
+        // register UnitOfWork
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }
 
