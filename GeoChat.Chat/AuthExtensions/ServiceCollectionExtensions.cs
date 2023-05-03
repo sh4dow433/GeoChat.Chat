@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-namespace GeoChat.Identity.Api.Extensions;
+namespace GeoChat.Identity.Api.AuthExtensions;
 
 public static class ServiceCollectionExtensions
 {

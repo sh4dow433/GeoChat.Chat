@@ -1,6 +1,11 @@
 using GeoChat.Chat.Api.Hubs;
+using GeoChat.Chat.Core.EventBus;
+using GeoChat.Chat.Core.EventBus.EventHandlers;
+using GeoChat.Chat.Core.EventBus.Events;
+using GeoChat.Chat.Core.EventBus.Extensions;
 using GeoChat.Chat.Infra.DbAccess;
-using GeoChat.Identity.Api.Extensions;
+using GeoChat.Chat.Infra.EventBus.Extensions;
+using GeoChat.Identity.Api.AuthExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +18,17 @@ builder.Services.RegisterSwaggerWithAuthInformation();
 builder.Services.RegisterDbAndRepos(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSignalR();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddSingleton<IEventBus, MockEventBus>();
+}
+else
+{
+    builder.Services.RegisterEventBus();
+    builder.Services.RegisterEventHandlers();
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,6 +36,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    var bus = app.Services.GetService<IEventBus>();
+    if (bus == null) throw new Exception("Bus is null");
+    bus.Subscribe<MessageSentEvent, MessageSentEventHandler>();
+    bus.Subscribe<NewAccountCreatedEvent, NewAccountCreatedEventHandler>();
 }
 
 app.UseHttpsRedirection();
