@@ -5,4 +5,5 @@ namespace GeoChat.Chat.Core.Repos;
 public interface IUsersRepo : IGenericRepo<User>
 {
     Task AddOrUpdateBatchAsync(IEnumerable<User> users);
+    Task<DateTime> GetLastUpdate();
 }

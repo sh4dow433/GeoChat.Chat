@@ -15,5 +15,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<MessageSentEventHandler>();
         services.AddTransient<NewAccountCreatedEventHandler>();
+        services.AddTransient<SyncResponseEventHandler>();
     }
 }
