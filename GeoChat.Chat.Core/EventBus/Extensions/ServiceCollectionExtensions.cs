@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
 {
     public static void RegisterEventHandlers(this IServiceCollection services)
     {
-        services.AddTransient<IEventHandler<MessageSentEvent>, MessageSentEventHandler>();
-        services.AddTransient<IEventHandler<NewAccountCreatedEvent>, NewAccountCreatedEventHandler>();
+        services.AddTransient<MessageSentEventHandler>();
+        services.AddTransient<NewAccountCreatedEventHandler>();
     }
 }
