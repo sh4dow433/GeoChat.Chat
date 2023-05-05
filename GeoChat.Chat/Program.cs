@@ -32,17 +32,15 @@ else
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
+if (!app.Environment.IsDevelopment())
+{ 
     var bus = app.Services.GetService<IEventBus>();
     if (bus == null) throw new Exception("Bus is null");
     bus.Subscribe<MessageSentEvent, MessageSentEventHandler>();
     bus.Subscribe<NewAccountCreatedEvent, NewAccountCreatedEventHandler>();
 }
-
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseRouting();
 
