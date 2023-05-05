@@ -25,4 +25,12 @@ public class UsersRepo : GenericRepo<User>, IUsersRepo
             }
         }
     }
+
+    public async Task<DateTime> GetLastUpdate()
+    {
+        return await EntitySet
+            .OrderByDescending(u => u.LastUpdated)
+            .Select(u => u.LastUpdated)
+            .FirstOrDefaultAsync();
+    }
 }
