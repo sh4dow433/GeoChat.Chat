@@ -8,6 +8,7 @@ public record ChatReadDto
     public List<MessageReadDto> Messages { get; init; } = new();
     public List<UserReadDto> ChatMembers { get; set; } = new();
     public string ChatName { get; init; } = null!;
-    public int? LocationId { get; set; }
+    public int? LocationId { get; init; }
 }
 
+ 
