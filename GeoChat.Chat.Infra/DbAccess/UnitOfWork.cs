@@ -5,13 +5,15 @@ namespace GeoChat.Chat.Infra.DbAccess;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly AppDbContext _dbContext;
+    protected readonly AppDbContext _dbContext;
 
     public IUsersRepo UsersRepo { get; }
 
     public IChatsRepo ChatsRepo { get; }
 
     public IMessagesRepo MessagesRepo { get; }
+
+    public IUserChatsRepo UserChatsRepo { get; }
 
     public UnitOfWork(AppDbContext dbContext)
     {
@@ -20,6 +22,7 @@ public class UnitOfWork : IUnitOfWork
         UsersRepo = new UsersRepo(dbContext);
         ChatsRepo= new ChatsRepo(dbContext);
         MessagesRepo = new MessagesRepo(dbContext);
+        UserChatsRepo= new UserChatsRepo(dbContext);
     }
 
     public async Task<int> SaveAsync() => await _dbContext.SaveChangesAsync();

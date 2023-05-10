@@ -1,4 +1,6 @@
 ﻿using GeoChat.Chat.Core.EventBus.Events;
+using GeoChat.Chat.Core.Models;
+using GeoChat.Chat.Core.Repos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +11,21 @@ namespace GeoChat.Chat.Core.EventBus.EventHandlers;
 
 public class NewAccountCreatedEventHandler : IEventHandler<NewAccountCreatedEvent>
 {
-    public NewAccountCreatedEventHandler()
-    {
+    private readonly IUnitOfWork _unitOfWork;
 
+    public NewAccountCreatedEventHandler(IUnitOfWork unitOfWork)
+    {
+        _unitOfWork = unitOfWork;
     }
 
-    public Task HandleAsync(NewAccountCreatedEvent @event)
+    public async Task HandleAsync(NewAccountCreatedEvent @event)
     {
-        throw new NotImplementedException();
+        var user = new User()
+        {
+            Id = @event.UserId,
+            Name = @event.UserName
+        };
+        _unitOfWork.UsersRepo.Create(user);
+        await _unitOfWork.SaveAsync();
     }
 }

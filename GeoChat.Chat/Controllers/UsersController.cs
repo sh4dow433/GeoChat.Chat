@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using GeoChat.Chat.Core.Repos;
+using GeoChat.Chat.Infra.DbAccess;
+using GeoChat.Identity.Api.Dtos;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoChat.Chat.Api.Controllers
@@ -7,46 +11,33 @@ namespace GeoChat.Chat.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public UsersController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            try
-            {
-                return Ok(id);
-
-            } catch (KeyNotFoundException keyEx)
-            {
-                return NotFound(keyEx.Message);
-
-            } catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            throw new NotImplementedException();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetAll(string name)
         {
-            try
-            {
-                return Ok();
-
-            } catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            var users = await _unitOfWork.UsersRepo.GetUsersByName(name);
+            var response = _mapper.Map<IEnumerable<UserReadDto>>(users);
+            return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> Create(Core.Models.User user)
         {
-            try
-            {
-                return Ok(user);
-
-            }catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            throw new NotImplementedException();
         }
     }
 }

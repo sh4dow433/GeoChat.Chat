@@ -9,9 +9,11 @@ namespace GeoChat.Chat.Core.Models
     public class Message
     {
         public int Id { get; set; }
-        public string Content { get; set; }
-        public User Sender { get; set; }
+        public int ChatId { get; set; }
+        public string UserId { get; set; } = null!;
+        public string Content { get; set; } = null!;
+        public User User { get; set; } = null!;
+        public Chat Chat { get; set; } = null!;
         public DateTime TimeSent { get; set; }
-
     }
 }

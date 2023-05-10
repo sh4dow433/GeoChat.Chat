@@ -17,4 +17,16 @@ public static class EventBusExtensions
         }
         eventBus.PublishEvent(@event, exchange, exchangeType, routing);
     }
+
+    public static void PublishChatCreatedEvent(this IEventBus eventBus, IConfiguration configuration, NewChatCreatedEvent@event, string routing)
+    {
+        var baseCfg = $"RabbitMq:PublishRouting:{nameof(NewChatCreatedEvent)}";
+        var exchange = configuration[$"{baseCfg}:Exchange"];
+        var exchangeType = configuration[$"{baseCfg}:ExchangeType"];
+        if (exchange == null || exchangeType == null)
+        {
+            throw new Exception("The exchange or exchange type wasn't configured in the appsettings.json file.");
+        }
+        eventBus.PublishEvent(@event, exchange, exchangeType, routing);
+    }
 }

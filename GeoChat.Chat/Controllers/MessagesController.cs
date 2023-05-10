@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GeoChat.Chat.Core.Interfaces;
+using GeoChat.Chat.Core.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GeoChat.Chat.Api.Controllers
 {
@@ -7,46 +11,40 @@ namespace GeoChat.Chat.Api.Controllers
     [ApiController]
     public class MessagesController : ControllerBase
     {
+        private readonly IChatService _chatService;
+
+        public MessagesController(IChatService chatService)
+        {
+            _chatService = chatService;
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            try
-            {
-                return Ok(id);
-            }catch (KeyNotFoundException keyEx)
-            {
-                return NotFound(keyEx.Message);
-
-            }catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            throw new NotImplementedException();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                return Ok("Message");
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            throw new NotImplementedException();
         }
-        [HttpPost]
-        public async Task<IActionResult> Send(Core.Models.Message message)
-        {
-            try
-            {
-                return Ok(message);
 
-            }catch(Exception ex)
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Send(Message message)
+        {
+            var userId = HttpContext.User?.FindFirst("Id")?.Value;
+            if (userId == null)
             {
-                return BadRequest(ex.Message);
+                return Unauthorized(new { ErrorMessage = "No user id claim" });
             }
+            if (userId != message.UserId)
+            {
+                return Unauthorized(new { ErrorMessage = "You cannot add a friend for other user" });
+            }
+            await _chatService.SendMessageAsync(message);
+            return Ok(new { Message = "Message was sent" });
         }
     }
 }

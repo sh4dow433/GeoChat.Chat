@@ -43,7 +43,7 @@ if (!app.Environment.IsDevelopment())
     bus.Subscribe<MessageSentEvent, MessageSentEventHandler>();
     bus.Subscribe<NewAccountCreatedEvent, NewAccountCreatedEventHandler>();
     bus.Subscribe<SyncResponseEvent, SyncResponseEventHandler>();
-
+    bus.Subscribe<NewChatCreatedEvent, NewChatCreatedEventHandler>();   
 
     // RESYNC THE SERVER ON STARTUP
     var syncCaller = app.Services.GetService<SyncCaller>();
