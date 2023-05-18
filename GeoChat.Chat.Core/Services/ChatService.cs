@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace GeoChat.Chat.Core.Services;
 
-internal class ChatService : IChatService
+public class ChatService : IChatService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEventBus _bus;
@@ -163,4 +163,18 @@ internal class ChatService : IChatService
     }
     private async Task<Models.Chat> GetLocationChatAsync() 
         => await _unitOfWork.ChatsRepo.GetAsync(c => c.LocationId == _locationChatId) ?? throw new Exception("LocationChat was null");
+
+    public void CreateLocationChatIfNotAvailable()
+    {
+        var chat = _unitOfWork.ChatsRepo.GetAsync(c => c.LocationId == _locationChatId).GetAwaiter().GetResult();
+        if (chat == null)
+        {
+            var newChat = new Models.Chat()
+            {
+                LocationId = _locationChatId
+            };
+            _unitOfWork.ChatsRepo.Create(newChat);
+            _unitOfWork.SaveAsync().GetAwaiter().GetResult();
+        }
+    }
 }

@@ -1,12 +1,15 @@
 using GeoChat.Chat.Api.Hubs;
+using GeoChat.Chat.Api.Services;
 using GeoChat.Chat.Core.EventBus;
 using GeoChat.Chat.Core.EventBus.EventHandlers;
 using GeoChat.Chat.Core.EventBus.Events;
 using GeoChat.Chat.Core.EventBus.Extensions;
+using GeoChat.Chat.Core.Interfaces;
 using GeoChat.Chat.Core.Services;
 using GeoChat.Chat.Infra.DbAccess;
 using GeoChat.Chat.Infra.EventBus.Extensions;
 using GeoChat.Identity.Api.AuthExtensions;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSignalR();
 
 builder.Services.AddTransient<SyncCaller>();
+builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IHubNotifier, HubNotifier>();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -49,6 +54,16 @@ if (!app.Environment.IsDevelopment())
     var syncCaller = app.Services.GetService<SyncCaller>();
     if (syncCaller == null) throw new Exception("Sync caller is null");
     syncCaller.SyncAsync().GetAwaiter().GetResult();
+
+    // CREATE LOCATION CHAT
+    var chatService = app.Services.GetService<IChatService>();
+    if (chatService == null) throw new Exception("Chat service is null");
+    chatService.CreateLocationChatIfNotAvailable();
+
+    // UPDATE DATABASE
+    var dbContext = app.Services.GetService<AppDbContext>();
+    if (dbContext == null) throw new Exception("DbContext is null");
+    dbContext.Database.Migrate();
 }
 
 

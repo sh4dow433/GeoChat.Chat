@@ -20,9 +20,9 @@ public class UnitOfWork : IUnitOfWork
         _dbContext = dbContext;
 
         UsersRepo = new UsersRepo(dbContext);
-        ChatsRepo= new ChatsRepo(dbContext);
+        ChatsRepo = new ChatsRepo(dbContext);
         MessagesRepo = new MessagesRepo(dbContext);
-        UserChatsRepo= new UserChatsRepo(dbContext);
+        UserChatsRepo = new UserChatsRepo(dbContext);
     }
 
     public async Task<int> SaveAsync() => await _dbContext.SaveChangesAsync();

@@ -14,5 +14,5 @@ public interface IChatService
     Task DisconnectFromChatAsync(string userId);
     Task CreateChatAsync(string userId, string friendUserId);
     Task<IEnumerable<UserChat>> GetUserChatsForUser(string userId);
-
+    void CreateLocationChatIfNotAvailable();
 }
