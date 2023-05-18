@@ -22,11 +22,6 @@ namespace GeoChat.Chat.Api.Controllers
             _chatService = chatService;
             _mapper = mapper;
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            throw new NotImplementedException();
-        }
 
         [HttpGet]
         [Authorize]
@@ -37,7 +32,7 @@ namespace GeoChat.Chat.Api.Controllers
             {
                 return Unauthorized(new { ErrorMessage = "No user id claim" });
             }
-            var userChats = await _chatService.GetUserChatsForUser(userId);
+            var userChats = await _chatService.GetUserChatsForUserAsync(userId);
             var mappedChats = _mapper.Map<IEnumerable<ChatReadDto>>(userChats);
             return Ok(mappedChats);
         }

@@ -14,7 +14,7 @@ public class ChatsRepo : GenericRepo<Core.Models.Chat>, IChatsRepo
 
     public async Task<Core.Models.Chat?> GetAsync(Expression<Func<Core.Models.Chat, bool>> filter)
     {
-        return await EntitySet.Where(filter).FirstOrDefaultAsync();
+        return await EntitySet.Include(c => c.UserChats).Where(filter).FirstOrDefaultAsync();
     }
     public async Task<IEnumerable<User>?> GetChatUsers(int chatId)
     {

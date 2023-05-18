@@ -34,7 +34,7 @@ public class ChatService : IChatService
         _locationChatName = config["Location:Name"]!;
         if (_locationChatName == null) throw new Exception("Location name is null");
     }
-    public async Task ConnectToChat(string userId, string connectionId)
+    public async Task ConnectToChatAsync(string userId, string connectionId)
     {
         // Change user connection id and routing key in DB
         var user = await _unitOfWork.UsersRepo.GetAsync(userId);
@@ -58,7 +58,7 @@ public class ChatService : IChatService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task<IEnumerable<UserChat>> GetUserChatsForUser(string userId)
+    public async Task<IEnumerable<UserChat>> GetUserChatsForUserAsync(string userId)
     {
         var userchats = await _unitOfWork.UserChatsRepo.GetAllAsync(uc => uc.UserId == userId);
         return userchats;
@@ -174,7 +174,14 @@ public class ChatService : IChatService
                 LocationId = _locationChatId
             };
             _unitOfWork.ChatsRepo.Create(newChat);
-            _unitOfWork.SaveAsync().GetAwaiter().GetResult();
         }
+        else
+        {
+            foreach (var uc in chat.UserChats)
+            {
+                _unitOfWork.UserChatsRepo.Delete(uc);
+            }
+        }
+            _unitOfWork.SaveAsync().GetAwaiter().GetResult();
     }
 }

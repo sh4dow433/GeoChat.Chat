@@ -10,9 +10,9 @@ namespace GeoChat.Chat.Core.Interfaces;
 public interface IChatService
 {
     Task SendMessageAsync(Message message);
-    Task ConnectToChat(string userId, string connectionId);
+    Task ConnectToChatAsync(string userId, string connectionId);
     Task DisconnectFromChatAsync(string userId);
     Task CreateChatAsync(string userId, string friendUserId);
-    Task<IEnumerable<UserChat>> GetUserChatsForUser(string userId);
+    Task<IEnumerable<UserChat>> GetUserChatsForUserAsync(string userId);
     void CreateLocationChatIfNotAvailable();
 }

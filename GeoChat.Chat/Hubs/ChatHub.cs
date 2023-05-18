@@ -22,7 +22,7 @@ namespace GeoChat.Chat.Api.Hubs
             {
                 throw new Exception("User or user id is null");
             }
-            await _chatService.ConnectToChat(userId, Context.ConnectionId);
+            await _chatService.ConnectToChatAsync(userId, Context.ConnectionId);
             await base.OnConnectedAsync();
         }
 

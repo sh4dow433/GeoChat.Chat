@@ -9,6 +9,7 @@ namespace GeoChat.Chat.Api.MappingProfiles
         public ChatProfile()
         {
             CreateMap<UserChat, ChatReadDto>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(uc => uc.Chat.Id))
                 .ForMember(dto => dto.Messages, opt => opt.MapFrom(uc => uc.Chat.Messages))
                 .ForMember(dto => dto.ChatMembers,
                     opt => opt.MapFrom(uc => uc.Chat.UserChats.Select(uc2 => uc2.User)))

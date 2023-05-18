@@ -10,6 +10,7 @@ namespace GeoChat.Chat.Api.MappingProfiles
         {
             CreateMap<Message, MessageReadDto>()
                 .ForMember(dto => dto.UserName, opt => opt.MapFrom(m => m.User.Name));
+            CreateMap<MessageCreateDto, Message>();
         }
     }   
 

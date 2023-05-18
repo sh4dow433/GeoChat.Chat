@@ -15,13 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.RegisterAuthServices(builder.Configuration);
 builder.Services.RegisterSwaggerWithAuthInformation();
 builder.Services.RegisterDbAndRepos(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(o => o.MaximumReceiveMessageSize = 102400000);
 
 builder.Services.AddTransient<SyncCaller>();
 builder.Services.AddScoped<IChatService, ChatService>();
@@ -65,6 +65,14 @@ if (!app.Environment.IsDevelopment())
     if (dbContext == null) throw new Exception("DbContext is null");
     dbContext.Database.Migrate();
 }
+app.UseCors(builder => builder
+         //.AllowAnyOrigin()
+         //.WithOrigins("null")
+         .SetIsOriginAllowed(_ => true)
+         .AllowAnyHeader()
+         .AllowAnyMethod()
+         .AllowCredentials()
+     );
 
 
 app.UseSwagger();
@@ -76,5 +84,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<ChatHub>("/chats"); // TODO: change magic string?
+app.MapHub<ChatHub>("/chatHub"); // TODO: change magic string?
 app.Run();

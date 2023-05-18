@@ -20,7 +20,7 @@ public static class EventBusExtensions
 
     public static void PublishChatCreatedEvent(this IEventBus eventBus, IConfiguration configuration, NewChatCreatedEvent@event, string routing)
     {
-        var baseCfg = $"RabbitMq:PublishRouting:{nameof(NewChatCreatedEvent)}";
+        var baseCfg = $"RabbitMq:PublishRoutings:{nameof(NewChatCreatedEvent)}";
         var exchange = configuration[$"{baseCfg}:Exchange"];
         var exchangeType = configuration[$"{baseCfg}:ExchangeType"];
         if (exchange == null || exchangeType == null)

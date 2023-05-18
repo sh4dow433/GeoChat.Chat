@@ -31,6 +31,7 @@ internal class UserChatsRepo : GenericRepo<UserChat>, IUserChatsRepo
                         .OrderByDescending(m => m.TimeSent)
                         .Take(50))
                     .ThenInclude(m => m.User)
+            .OrderBy(uc => uc.Chat.LocationId == null)
             .Where(filter)
             .ToListAsync();
 
