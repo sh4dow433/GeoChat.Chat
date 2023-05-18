@@ -72,6 +72,17 @@ public class ChatService : IChatService
         {
             throw new Exception("User or friend doesnt exist");
         }
+        if (userId == friendUserId)
+        {
+            return;
+        }
+
+        var existentChat = await _unitOfWork.ChatsRepo.GetAsync(c => c.UserChats.Any(uc => uc.UserId == userId) && c.UserChats.Any(uc => uc.UserId == friendUserId));
+        
+        if (existentChat != null)
+        {
+            return;
+        }
 
         var chat = new Models.Chat();
         var userChat = new UserChat()
