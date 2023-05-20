@@ -27,7 +27,7 @@ public class MessageSentEventHandler : IEventHandler<MessageSentEvent>
 
     public async Task HandleAsync(MessageSentEvent @event)
     {
-        var user = await _unitOfWork.UsersRepo.GetAsync(@event.Message.User.Id);
+        var user = await _unitOfWork.UsersRepo.GetAsync(@event.DestinationUserId);
         
         if (user == null) throw new Exception("Message sender was null");
 
