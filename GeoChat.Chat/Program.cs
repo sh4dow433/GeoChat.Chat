@@ -41,7 +41,13 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
-{ 
+{
+
+    // UPDATE DATABASE
+    var dbContext = app.Services.GetService<AppDbContext>();
+    if (dbContext == null) throw new Exception("DbContext is null");
+    dbContext.Database.Migrate();
+
     // SUBSCRIBE TO ALL THE QUEUES
     var bus = app.Services.GetService<IEventBus>();
     if (bus == null) throw new Exception("Bus is null");
@@ -59,11 +65,6 @@ if (!app.Environment.IsDevelopment())
     var chatService = app.Services.GetService<IChatService>();
     if (chatService == null) throw new Exception("Chat service is null");
     chatService.CreateLocationChatIfNotAvailable();
-
-    // UPDATE DATABASE
-    var dbContext = app.Services.GetService<AppDbContext>();
-    if (dbContext == null) throw new Exception("DbContext is null");
-    dbContext.Database.Migrate();
 }
 app.UseCors(builder => builder
          //.AllowAnyOrigin()
