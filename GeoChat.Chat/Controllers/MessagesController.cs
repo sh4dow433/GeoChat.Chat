@@ -1,5 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using GeoChat.Chat.Api.Dtos;
+using GeoChat.Chat.Core.Interfaces;
+using GeoChat.Chat.Core.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GeoChat.Chat.Api.Controllers
 {
@@ -7,46 +13,31 @@ namespace GeoChat.Chat.Api.Controllers
     [ApiController]
     public class MessagesController : ControllerBase
     {
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            try
-            {
-                return Ok(id);
-            }catch (KeyNotFoundException keyEx)
-            {
-                return NotFound(keyEx.Message);
+        private readonly IChatService _chatService;
+        private readonly IMapper _mapper;
 
-            }catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+        public MessagesController(IChatService chatService, IMapper mapper)
+        {
+            _chatService = chatService;
+            _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            try
-            {
-                return Ok("Message");
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
         [HttpPost]
-        public async Task<IActionResult> Send(Core.Models.Message message)
+        [Authorize]
+        public async Task<IActionResult> Send(MessageCreateDto messageDto)
         {
-            try
+            var userId = HttpContext.User?.FindFirst("Id")?.Value;
+            if (userId == null)
             {
-                return Ok(message);
-
-            }catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
+                return Unauthorized(new { ErrorMessage = "No user id claim" });
             }
+            if (userId != messageDto.UserId)
+            {
+                return Unauthorized(new { ErrorMessage = "You cannot add a friend for other user" });
+            }
+            var message = _mapper.Map<Message>(messageDto);
+            await _chatService.SendMessageAsync(message);
+            return Ok(new { Message = "Message was sent" });
         }
     }
 }

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace GeoChat.Chat.Core.EventBus.Events;
 
-public class MessageSentEvent : BaseEvent
+public class NewChatCreatedEvent : BaseEvent
 {
-    public Message Message { get; set; } = null!;
+    public UserChat UserChat { get; set; } = null!;
     public string ConnectionId { get; set; } = null!;
 }

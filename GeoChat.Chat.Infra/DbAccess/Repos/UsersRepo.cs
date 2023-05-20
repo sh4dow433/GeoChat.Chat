@@ -25,6 +25,11 @@ public class UsersRepo : GenericRepo<User>, IUsersRepo
             }
         }
     }
+    public async Task<IEnumerable<User>> GetUsersByName(string name, string currentUserId)
+    {
+        var users = await EntitySet.Where(u => u.Name.Contains(name) && u.Id != currentUserId).ToListAsync();
+        return users;
+    }
 
     public async Task<DateTime> GetLastUpdate()
     {

@@ -3,9 +3,11 @@ using GeoChat.Chat.Core.EventBus.Events;
 using GeoChat.Chat.Infra.EventBus.ConnectionManager;
 using GeoChat.Chat.Infra.EventBus.EventsManager;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GeoChat.Chat.Infra.EventBus;
 
@@ -34,7 +36,9 @@ internal class EventBus : IEventBus
         var channel = _mqConnectionManager.Channel;
         channel.ExchangeDeclare(exchange, exchangeType);
 
-        var message = JsonSerializer.Serialize(@event);
+        var message = JsonConvert.SerializeObject(@event, new JsonSerializerSettings { 
+            ReferenceLoopHandling= ReferenceLoopHandling.Ignore,
+        });
         var body = Encoding.UTF8.GetBytes(message);
         channel.BasicPublish(
                 exchange: exchange,
@@ -99,7 +103,7 @@ internal class EventBus : IEventBus
         foreach (var handlerType in _eventManager.GetHandlers(eventType.Name))
         {
             var handler = scope.ServiceProvider.GetService(handlerType);
-            var actualEvent = JsonSerializer.Deserialize(body, eventType);
+            var actualEvent = System.Text.Json.JsonSerializer.Deserialize(body, eventType);
             var handlerConcreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
             if (handler == null || actualEvent == null || handlerConcreteType == null)
             {

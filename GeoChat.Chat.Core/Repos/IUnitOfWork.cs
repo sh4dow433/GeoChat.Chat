@@ -11,5 +11,6 @@ public interface IUnitOfWork
     IUsersRepo UsersRepo { get; }
     IChatsRepo ChatsRepo { get; }
     IMessagesRepo MessagesRepo { get; }
+    IUserChatsRepo UserChatsRepo { get; }
     Task<int> SaveAsync();
 }

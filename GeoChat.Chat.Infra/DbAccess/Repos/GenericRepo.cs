@@ -5,8 +5,7 @@ namespace GeoChat.Chat.Infra.DbAccess.Repos;
 
 public class GenericRepo<TEntity> : IGenericRepo<TEntity> where TEntity : class, new()
 {
-    protected DbSet<TEntity> EntitySet { get; }
-
+    protected virtual DbSet<TEntity> EntitySet { get; }
     public GenericRepo(AppDbContext dbContext)
     {
         EntitySet = dbContext.Set<TEntity>();
@@ -18,11 +17,11 @@ public class GenericRepo<TEntity> : IGenericRepo<TEntity> where TEntity : class,
         return entity;
     }
 
-    public void Delete(TEntity entity) => EntitySet.Remove(entity);
+    public virtual void Delete(TEntity entity) => EntitySet.Remove(entity);
 
-    public async Task<IEnumerable<TEntity>> GetAllAsync() => await EntitySet.ToListAsync();
+    public virtual async Task<IEnumerable<TEntity>> GetAllAsync() => await EntitySet.ToListAsync();
 
-    public async Task<TEntity?> GetAsync(object id) => await EntitySet.FindAsync(id);
+    public virtual async Task<TEntity?> GetAsync(object id) => await EntitySet.FindAsync(id);
 
-    public void Update(TEntity entity) => EntitySet.Update(entity);
+    public virtual void Update(TEntity entity) => EntitySet.Update(entity);
 }

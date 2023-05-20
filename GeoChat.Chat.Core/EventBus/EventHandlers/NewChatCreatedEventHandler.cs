@@ -3,17 +3,22 @@ using GeoChat.Chat.Core.EventBus.Extensions;
 using GeoChat.Chat.Core.Interfaces;
 using GeoChat.Chat.Core.Repos;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace GeoChat.Chat.Core.EventBus.EventHandlers;
 
-public class MessageSentEventHandler : IEventHandler<MessageSentEvent>
+public class NewChatCreatedEventHandler : IEventHandler<NewChatCreatedEvent>
 {
     private readonly IHubNotifier _hubNotifier;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IConfiguration _configuration;
     private readonly IEventBus _bus;
 
-    public MessageSentEventHandler(
+    public NewChatCreatedEventHandler(
         IHubNotifier hubNotifier,
         IUnitOfWork unitOfWork,
         IConfiguration configuration,
@@ -24,12 +29,11 @@ public class MessageSentEventHandler : IEventHandler<MessageSentEvent>
         _configuration = configuration;
         _bus = bus;
     }
-
-    public async Task HandleAsync(MessageSentEvent @event)
+    public async Task HandleAsync(NewChatCreatedEvent @event)
     {
-        var user = await _unitOfWork.UsersRepo.GetAsync(@event.Message.User.Id);
-        
-        if (user == null) throw new Exception("Message sender was null");
+        var userId = @event.UserChat.UserId;
+        var user = await _unitOfWork.UsersRepo.GetAsync(userId);
+        if (user == null) throw new Exception("User is null");
 
         if (user.SignalRConnectionId == null || user.RoutingKey == null)
         {
@@ -39,19 +43,19 @@ public class MessageSentEventHandler : IEventHandler<MessageSentEvent>
 
         // check if the user is still connected to this server
         var localRoutingKey = _configuration["RabbitMq:SubscribeRoutings:MessageSentEvent:RoutingKey"];
-        if (user.RoutingKey == localRoutingKey && 
+        if (user.RoutingKey == localRoutingKey &&
             user.SignalRConnectionId == @event.ConnectionId)
         {
-            await _hubNotifier.SendMessage(@event.Message, @event.ConnectionId);
+            await _hubNotifier.SendNewChatCreatedNotification(@event.UserChat, @event.ConnectionId);
             return;
         }
 
-        // if the user is connected to another server reroute the message to that server
-        var newEvent = new MessageSentEvent()
+        // if the user is connected to another server reroute the event to that server
+        var newEvent = new NewChatCreatedEvent()
         {
-            Message = @event.Message,
+            UserChat = @event.UserChat,
             ConnectionId = user.SignalRConnectionId
         };
-        _bus.PublishMessageSentEvent(_configuration, newEvent, user.RoutingKey);
+        _bus.PublishChatCreatedEvent(_configuration, newEvent, user.RoutingKey);
     }
 }
