@@ -166,7 +166,8 @@ public class ChatService : IChatService
                 var @event = new MessageSentEvent()
                 {
                     Message = msg,
-                    ConnectionId = user.SignalRConnectionId
+                    DestinationConnectionId = user.SignalRConnectionId,
+                    DestinationUserId = user.Id
                 };
                 _bus.PublishMessageSentEvent(_config, @event, user.RoutingKey);
             }
