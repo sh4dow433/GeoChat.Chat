@@ -40,9 +40,9 @@ public class MessageSentEventHandler : IEventHandler<MessageSentEvent>
         // check if the user is still connected to this server
         var localRoutingKey = _configuration["RabbitMq:SubscribeRoutings:MessageSentEvent:RoutingKey"];
         if (user.RoutingKey == localRoutingKey && 
-            user.SignalRConnectionId == @event.ConnectionId)
+            user.SignalRConnectionId == @event.DestinationConnectionId)
         {
-            await _hubNotifier.SendMessage(@event.Message, @event.ConnectionId);
+            await _hubNotifier.SendMessage(@event.Message, @event.DestinationConnectionId);
             return;
         }
 
@@ -50,7 +50,7 @@ public class MessageSentEventHandler : IEventHandler<MessageSentEvent>
         var newEvent = new MessageSentEvent()
         {
             Message = @event.Message,
-            ConnectionId = user.SignalRConnectionId
+            DestinationConnectionId = user.SignalRConnectionId
         };
         _bus.PublishMessageSentEvent(_configuration, newEvent, user.RoutingKey);
     }

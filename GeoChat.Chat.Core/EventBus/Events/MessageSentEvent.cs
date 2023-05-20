@@ -10,5 +10,6 @@ namespace GeoChat.Chat.Core.EventBus.Events;
 public class MessageSentEvent : BaseEvent
 {
     public Message Message { get; set; } = null!;
-    public string ConnectionId { get; set; } = null!;
+    public string DestinationConnectionId { get; set; } = null!;
+    public string DestinationUserId { get; set; } = null!;
 }
